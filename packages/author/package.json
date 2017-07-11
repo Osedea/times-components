@@ -1,7 +1,17 @@
 {
   "name": "@times-components/author",
   "version": "0.0.1",
-  "main": "author.js",
+  "main": "author.es5.js",
+  "jsnext:main": "author.js",
+  "module": "author.js",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        { "presets": ["es2015"] }
+      ]
+    ]
+  },
   "scripts": {
     "flow": "node_modules/flow-bin/cli.js",
     "test:watch": "jest --bail --verbose --watchAll",
