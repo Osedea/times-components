@@ -1,4 +1,4 @@
-import pbjs from "../pbjs-manager";
+import { PbjsManager as pbjs } from "../pbjs-manager";
 import { pbjs as pbjsConfig } from "../config";
 
 describe("PrebidManager", () => {
