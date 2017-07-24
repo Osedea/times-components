@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ViewPropTypes } from "react-native";
 import PropTypes from "prop-types";
 
 const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ class Pagination extends React.Component {
   }
 
   render() {
-    const { count, page, pageSize } = this.props;
+    const { count, page, pageSize, style } = this.props;
 
     const startResult = (page - 1) * pageSize + 1;
     const finalResult = Math.min(count, page * pageSize);
@@ -81,7 +81,7 @@ class Pagination extends React.Component {
       : null;
 
     return (
-      <View style={styles.container} onLayout={this.handleLayout}>
+      <View style={[styles.container, style]} onLayout={this.handleLayout}>
         <Text
           style={[styles.label, this.state.isCompact ? styles.compact : null]}
         >
@@ -97,14 +97,16 @@ class Pagination extends React.Component {
 }
 
 Pagination.propTypes = {
+  count: PropTypes.number.isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
-  count: PropTypes.number.isRequired
+  style: ViewPropTypes.style
 };
 
 Pagination.defaultProps = {
   page: 1,
-  pageSize: 20
+  pageSize: 20,
+  style: null
 };
 
 export default Pagination;
