@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import PropTypes from "prop-types";
 
-import AdComposer from "./ad-composer";
+import AdComposer from "./ad-composer.web";
 import AdManager from "./ad-manager";
 import { getSlotConfig } from "./generate-config";
 
