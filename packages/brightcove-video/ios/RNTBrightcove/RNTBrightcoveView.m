@@ -52,11 +52,25 @@
   _progress = 0;
   _isFinished = NO;
 
-  BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
+  IMASettings *imaSettings = [[IMASettings alloc] init];
+  imaSettings.language = @"fr-CA";
 
-  _playbackController = [manager createPlaybackController];
+  IMAAdsRenderingSettings *renderSettings = [[IMAAdsRenderingSettings alloc] init];
+    renderSettings.webOpenerPresentingController = self.fullscreenViewController;
+
+  BCOVIMAAdsRequestPolicy *adsRequestPolicy = [BCOVIMAAdsRequestPolicy adsRequestPolicyWithVMAPAdTagUrl:_vastTag];
+
+  BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
+  _playbackController =
+         [manager createIMAPlaybackControllerWithSettings:imaSettings
+                    adsRenderingSettings:renderSettings
+                    adsRequestPolicy:adsRequestPolicy
+                    adContainer:self
+                    companionSlots:nil
+                    viewStrategy:nil];
+
   _playbackController.delegate = self;
-  _playbackController.autoAdvance = YES;
+   _playbackController.autoAdvance = YES;
   _playbackController.autoPlay = [_autoplayNumber boolValue];
 
   _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
@@ -83,11 +97,15 @@
 
 - (void)removeFromSuperview {
   _eventDispatcher = nil;
+    for (UIView *subView in self.subviews)
+    {
+        [subView removeFromSuperview];
+    }
   [super removeFromSuperview];
 }
 
 - (void)initPlayerView {
-  if (_policyKey && _accountId && _videoId && _autoplayNumber && _hideFullScreenButtonNumber) {
+  if (_policyKey && _accountId && _videoId && _autoplayNumber && _hideFullScreenButtonNumber && _vastTag) {
     [self setup];
 
     BCOVPUIBasicControlView *controlsView = [BCOVPUIBasicControlView basicControlViewWithVODLayout];
@@ -109,7 +127,6 @@
     playerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
     _playerView = playerView;
-    _playerView.playbackController = _playbackController;
 
     [self requestContentFromPlaybackService];
   }
@@ -120,6 +137,13 @@
     _policyKey = policyKey;
     [self initPlayerView];
   }
+}
+
+- (void)setVASTTag:(NSString *)vastTag {
+    if (![vastTag isEqual:_vastTag]) {
+        _vastTag = vastTag;
+        [self initPlayerView];
+    }
 }
 
 - (void)setAccountId:(NSString *)accountId {
@@ -228,16 +252,16 @@
 }
 
 - (RNTFullscreenPresentingAutoRotatingViewController *)fullscreenViewController {
-  
+
   if (_fullscreenViewController) {
     return _fullscreenViewController;
   }
-  
+
   RNTFullscreenPresentingAutoRotatingViewController* vc = [RNTFullscreenPresentingAutoRotatingViewController new];
   vc.viewControllerToPresentFrom = [self rootViewController];
 
   _fullscreenViewController = vc;
-  
+
   return _fullscreenViewController;
 
 }

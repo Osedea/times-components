@@ -138,6 +138,7 @@ class BrightcoveVideo extends Component {
           zIndex: this.props.zIndex
         }}
         policyKey={this.props.policyKey}
+        vastTag={this.props.vastTag}
         accountId={this.props.accountId}
         videoId={this.props.videoId}
         autoplay={this.props.autoplay}
