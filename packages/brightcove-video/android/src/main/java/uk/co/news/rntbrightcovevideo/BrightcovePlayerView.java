@@ -117,7 +117,7 @@ public class BrightcovePlayerView extends BrightcoveExoPlayerVideoView {
             Log.i(TAG, "INIT");
 
             EventEmitter eventEmitter = setupEventEmitter();
-            setupGoogleIMA(vastTag, eventEmitter);
+            // setupGoogleIMA(vastTag, eventEmitter);
 
             Catalog catalog = new Catalog(eventEmitter, accountId, policyKey);
             catalog.findVideoByID(videoId, createVideoListener());

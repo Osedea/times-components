@@ -51,6 +51,11 @@ public class RNTBrightcoveManager extends SimpleViewManager<RNTBrightcoveView> {
         view.setHideFullScreenButton(hideFullScreenButton);
     }
 
+    @ReactProp(name = "vastTag")
+    public void setVastTag(RNTBrightcoveView view, String vastTag) {
+        view.setVastTag(vastTag);
+    }
+
     @Override
     public void receiveCommand(RNTBrightcoveView view, int commandId, @Nullable ReadableArray args) {
         switch (commandId) {
