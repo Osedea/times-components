@@ -22,6 +22,7 @@ public class RNTBrightcoveView extends FrameLayout {
     private String mVideoId;
     private String mAccountId;
     private String mPolicyKey;
+    private String mVastTag;
     private Boolean mAutoplay;
     private Boolean mHideFullScreenButton;
     private BrightcovePlayerView mPlayerView;
@@ -51,6 +52,13 @@ public class RNTBrightcoveView extends FrameLayout {
     public void setVideoId(final String videoId) {
         if (mVideoId == null) {
             mVideoId = videoId;
+            initPlayerView();
+        }
+    }
+
+    public void setVastTag(final String vastTag) {
+        if (mVastTag == null) {
+            mVastTag = vastTag;
             initPlayerView();
         }
     }
@@ -92,7 +100,8 @@ public class RNTBrightcoveView extends FrameLayout {
             addView(mPlayerView);
 
             boolean isFullscreenButtonHidden = mHideFullScreenButton != null ? mHideFullScreenButton : false;
-            mPlayerView.initVideo(mVideoId, mAccountId, mPolicyKey, mAutoplay, isFullscreenButtonHidden);
+            mPlayerView.initVideo(mVideoId, mAccountId, mPolicyKey, mAutoplay, isFullscreenButtonHidden, mVastTag);
+            // mPlayerView.initVideo(mVideoId, mAccountId, mPolicyKey, mAutoplay, isFullscreenButtonHidden);
         }
     }
 
@@ -137,6 +146,7 @@ public class RNTBrightcoveView extends FrameLayout {
     }
 
     private boolean parametersSet() {
-        return mVideoId != null && mAccountId != null && mPolicyKey != null && mAutoplay != null && mHideFullScreenButton != null;
+        // return mVideoId != null && mAccountId != null && mPolicyKey != null && mAutoplay != null && mHideFullScreenButton != null;
+        return mVideoId != null && mAccountId != null && mPolicyKey != null && mAutoplay != null && mHideFullScreenButton != null && mVastTag != null;
     }
 }
