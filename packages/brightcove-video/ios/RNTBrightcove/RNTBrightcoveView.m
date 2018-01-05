@@ -47,36 +47,6 @@
   return self;
 }
 
-- (void)setup {
-  _isPlaying = NO;
-  _progress = 0;
-  _isFinished = NO;
-
-  IMASettings *imaSettings = [[IMASettings alloc] init];
-  imaSettings.language = @"fr-CA";
-
-  IMAAdsRenderingSettings *renderSettings = [[IMAAdsRenderingSettings alloc] init];
-    renderSettings.webOpenerPresentingController = self.fullscreenViewController;
-
-  BCOVIMAAdsRequestPolicy *adsRequestPolicy = [BCOVIMAAdsRequestPolicy adsRequestPolicyWithVMAPAdTagUrl:_vastTag];
-
-  BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
-  _playbackController =
-         [manager createIMAPlaybackControllerWithSettings:imaSettings
-                    adsRenderingSettings:renderSettings
-                    adsRequestPolicy:adsRequestPolicy
-                    adContainer:self
-                    companionSlots:nil
-                    viewStrategy:nil];
-
-  _playbackController.delegate = self;
-   _playbackController.autoAdvance = YES;
-  _playbackController.autoPlay = [_autoplayNumber boolValue];
-
-  _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
-                                                          policyKey:_policyKey];
-}
-
 - (void)requestContentFromPlaybackService {
   [self.playbackService findVideoWithVideoID:_videoId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
 #pragma unused (jsonResponse)
@@ -106,7 +76,9 @@
 
 - (void)initPlayerView {
   if (_policyKey && _accountId && _videoId && _autoplayNumber && _hideFullScreenButtonNumber && _vastTag) {
-    [self setup];
+    _isPlaying = NO;
+    _progress = 0;
+    _isFinished = NO;
 
     BCOVPUIBasicControlView *controlsView = [BCOVPUIBasicControlView basicControlViewWithVODLayout];
     controlsView.playbackButton.accessibilityIdentifier = @"play";
@@ -119,14 +91,39 @@
 
     BCOVPUIPlayerViewOptions *options = [[BCOVPUIPlayerViewOptions alloc] init];
 
-    options.presentingViewController = [self fullscreenViewController];
-
-    BCOVPUIPlayerView *playerView = [[BCOVPUIPlayerView alloc] initWithPlaybackController:self.playbackController options:options controlsView:controlsView ];
+    BCOVPUIPlayerView *playerView = [[BCOVPUIPlayerView alloc] initWithPlaybackController:nil options:options controlsView:controlsView ];
     playerView.delegate = self;
 
     playerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
     _playerView = playerView;
+      
+    // IMA setup start
+    IMASettings *imaSettings = [[IMASettings alloc] init];
+    imaSettings.language = @"fr-CA";
+    
+    IMAAdsRenderingSettings *renderSettings = [[IMAAdsRenderingSettings alloc] init];
+    renderSettings.webOpenerPresentingController = nil;
+    
+    BCOVIMAAdsRequestPolicy *adsRequestPolicy = [BCOVIMAAdsRequestPolicy adsRequestPolicyWithVMAPAdTagUrl:_vastTag];
+    
+    BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
+    _playbackController =
+    [manager createIMAPlaybackControllerWithSettings:imaSettings
+                                adsRenderingSettings:renderSettings
+                                    adsRequestPolicy:adsRequestPolicy
+                                         adContainer:playerView
+                                      companionSlots:nil
+                                        viewStrategy:nil];
+    
+    _playbackController.delegate = self;
+    _playbackController.autoAdvance = YES;
+    _playbackController.autoPlay = [_autoplayNumber boolValue];
+    self.playerView.playbackController = self.playbackController;
+    
+    _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
+                                                            policyKey:_policyKey];
+    // IMA setup end
 
     [self requestContentFromPlaybackService];
   }
