@@ -8,6 +8,7 @@ const numberOrString = PropTypes.oneOfType([
 export default {
   videoId: PropTypes.string.isRequired,
   accountId: PropTypes.string.isRequired,
+  vastTag: PropTypes.string.isRequired,
   policyKey: PropTypes.string,
   playerId: PropTypes.string,
   width: numberOrString,

@@ -47,22 +47,6 @@
   return self;
 }
 
-- (void)setup {
-  _isPlaying = NO;
-  _progress = 0;
-  _isFinished = NO;
-
-  BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
-
-  _playbackController = [manager createPlaybackController];
-  _playbackController.delegate = self;
-  _playbackController.autoAdvance = YES;
-  _playbackController.autoPlay = [_autoplayNumber boolValue];
-
-  _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
-                                                          policyKey:_policyKey];
-}
-
 - (void)requestContentFromPlaybackService {
   [self.playbackService findVideoWithVideoID:_videoId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
 #pragma unused (jsonResponse)
@@ -83,12 +67,18 @@
 
 - (void)removeFromSuperview {
   _eventDispatcher = nil;
+    for (UIView *subView in self.subviews)
+    {
+        [subView removeFromSuperview];
+    }
   [super removeFromSuperview];
 }
 
 - (void)initPlayerView {
-  if (_policyKey && _accountId && _videoId && _autoplayNumber && _hideFullScreenButtonNumber) {
-    [self setup];
+  if (_policyKey && _accountId && _videoId && _autoplayNumber && _hideFullScreenButtonNumber && _vastTag) {
+    _isPlaying = NO;
+    _progress = 0;
+    _isFinished = NO;
 
     BCOVPUIBasicControlView *controlsView = [BCOVPUIBasicControlView basicControlViewWithVODLayout];
     controlsView.playbackButton.accessibilityIdentifier = @"play";
@@ -101,15 +91,39 @@
 
     BCOVPUIPlayerViewOptions *options = [[BCOVPUIPlayerViewOptions alloc] init];
 
-    options.presentingViewController = [self fullscreenViewController];
-
-    BCOVPUIPlayerView *playerView = [[BCOVPUIPlayerView alloc] initWithPlaybackController:self.playbackController options:options controlsView:controlsView ];
+    BCOVPUIPlayerView *playerView = [[BCOVPUIPlayerView alloc] initWithPlaybackController:nil options:options controlsView:controlsView ];
     playerView.delegate = self;
 
     playerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
     _playerView = playerView;
-    _playerView.playbackController = _playbackController;
+      
+    // IMA setup start
+    IMASettings *imaSettings = [[IMASettings alloc] init];
+    imaSettings.language = @"fr-CA";
+    
+    IMAAdsRenderingSettings *renderSettings = [[IMAAdsRenderingSettings alloc] init];
+    renderSettings.webOpenerPresentingController = nil;
+    
+    BCOVIMAAdsRequestPolicy *adsRequestPolicy = [BCOVIMAAdsRequestPolicy adsRequestPolicyWithVMAPAdTagUrl:_vastTag];
+    
+    BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
+    _playbackController =
+    [manager createIMAPlaybackControllerWithSettings:imaSettings
+                                adsRenderingSettings:renderSettings
+                                    adsRequestPolicy:adsRequestPolicy
+                                         adContainer:playerView
+                                      companionSlots:nil
+                                        viewStrategy:nil];
+    
+    _playbackController.delegate = self;
+    _playbackController.autoAdvance = YES;
+    _playbackController.autoPlay = [_autoplayNumber boolValue];
+    self.playerView.playbackController = self.playbackController;
+    
+    _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
+                                                            policyKey:_policyKey];
+    // IMA setup end
 
     [self requestContentFromPlaybackService];
   }
@@ -120,6 +134,13 @@
     _policyKey = policyKey;
     [self initPlayerView];
   }
+}
+
+- (void)setVASTTag:(NSString *)vastTag {
+    if (![vastTag isEqual:_vastTag]) {
+        _vastTag = vastTag;
+        [self initPlayerView];
+    }
 }
 
 - (void)setAccountId:(NSString *)accountId {
@@ -228,16 +249,16 @@
 }
 
 - (RNTFullscreenPresentingAutoRotatingViewController *)fullscreenViewController {
-  
+
   if (_fullscreenViewController) {
     return _fullscreenViewController;
   }
-  
+
   RNTFullscreenPresentingAutoRotatingViewController* vc = [RNTFullscreenPresentingAutoRotatingViewController new];
   vc.viewControllerToPresentFrom = [self rootViewController];
 
   _fullscreenViewController = vc;
-  
+
   return _fullscreenViewController;
 
 }

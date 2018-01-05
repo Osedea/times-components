@@ -284,6 +284,8 @@
 					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Brightcove-Player-Core",
 					"$(SRCROOT)/../../../../React/**",
 					"$(SRCROOT)/../../../react-native/React/**",
+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Brightcove-Player-IMA",
+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/GoogleAds-IMA-iOS-SDK",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
@@ -309,6 +311,8 @@
 					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Brightcove-Player-Core",
 					"$(SRCROOT)/../../../../React/**",
 					"$(SRCROOT)/../../../react-native/React/**",
+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Brightcove-Player-IMA",
+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/GoogleAds-IMA-iOS-SDK",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";

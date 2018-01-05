@@ -6,6 +6,7 @@
 @implementation RNTBrightcoveManager
 
 RCT_EXPORT_MODULE();
+RCT_EXPORT_VIEW_PROPERTY(vastTag, NSString);
 RCT_EXPORT_VIEW_PROPERTY(policyKey, NSString);
 RCT_EXPORT_VIEW_PROPERTY(accountId, NSString);
 RCT_EXPORT_VIEW_PROPERTY(videoId, NSString);
