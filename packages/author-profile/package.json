@@ -79,7 +79,7 @@
     "@times-components/tracking": "0.5.10",
     "@times-components/utils": "0.0.10",
     "lodash.get": "4.4.2",
-    "lodash.merge": "4.6.0",
+    "lodash.merge": "4.6.2",
     "prop-types": "15.6.0"
   },
   "peerDependencies": {
