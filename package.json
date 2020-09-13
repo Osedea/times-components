@@ -111,7 +111,7 @@
     "jest": "21.2.1",
     "lcov-result-merger": "1.2.0",
     "lerna": "2.5.1",
-    "node-fetch": "1.7.2",
+    "node-fetch": "2.6.1",
     "prettier": "1.8.2",
     "prop-types": "15.6.0",
     "react": "16.2.0",
